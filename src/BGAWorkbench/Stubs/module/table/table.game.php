@@ -50,6 +50,13 @@ class Gamestate
     public function changeActivePlayer($player_id)
     {
     }
+
+    public function state(): array
+    {
+        return [
+            'name' => '',
+        ];
+    }
 }
 
 abstract class Table extends APP_GameClass
