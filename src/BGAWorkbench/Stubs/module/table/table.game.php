@@ -96,7 +96,17 @@ abstract class Table extends APP_GameClass
 
     public function getGameStateValue($label)
     {
-        return $this->gameStateValues[$label];
+        return $this->gameStateValues[$label] ?? null;
+    }
+
+    public function setGameStateValue(string $label, $value)
+    {
+        return $this->gameStateValues[$label] = $value;
+    }
+
+    public function getBgaEnvironment(): string
+    {
+        return 'studio';
     }
 
     private function getStatTypeId($targetName)

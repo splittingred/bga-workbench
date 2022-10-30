@@ -402,6 +402,7 @@ class Project
                 "Expected exactly one Table classes in game file {$gameFilepath}, found exactly {$numTableClasses}"
             );
         }
-        return $tableClasses[0]->newInstance();
+        $table = array_pop($tableClasses);
+        return $table->newInstance();
     }
 }
