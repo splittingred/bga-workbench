@@ -50,26 +50,27 @@ class InitCommandTest extends TestCase
         ]);
         $this->tester->execute([]);
 
+        $newWbConfig = new WorkbenchProjectConfig(
+            $this->workingDir->getFileInfo(),
+            true,
+            [],
+            '',
+            'dbname',
+            '127.0.0.1',
+            3306,
+            'dbuser',
+            'dbpass',
+            false,
+            'php',
+            new Some(
+                new DeployConfig('shost', 'suser', 'spass')
+            )
+        );
+        $fileWbConfig = WorkbenchProjectConfigSerialiser::readFromDirectory($this->workingDir->getFileInfo());
         assertThat($this->tester->getStatusCode(), equalTo(0));
         assertThat(
-            WorkbenchProjectConfigSerialiser::readFromDirectory($this->workingDir->getFileInfo()),
-            equalTo(
-                new WorkbenchProjectConfig(
-                    $this->workingDir->getFileInfo(),
-                    true,
-                    [],
-                    '',
-                    'dbname',
-                    '127.0.0.1',
-                    'dbuser',
-                    'dbpass',
-                    false,
-                    'php',
-                    new Some(
-                        new DeployConfig('shost', 'suser', 'spass')
-                    )
-                )
-            )
+            $fileWbConfig,
+            equalTo($newWbConfig)
         );
     }
 

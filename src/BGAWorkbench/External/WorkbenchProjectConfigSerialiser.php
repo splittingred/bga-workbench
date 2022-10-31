@@ -85,12 +85,13 @@ class WorkbenchProjectConfigSerialiser
             $directory,
             $processed['useComposer'],
             $processed['extraSrc'],
-            !empty($processed['testDb']['name']) ? $processed['testDb']['name'] : '',
-            !empty($processed['testDb']['namePrefix']) ? $processed['testDb']['namePrefix'] : 'bgawb_game_',
-            !empty($processed['testDb']['host']) ? $processed['testDb']['host'] : '127.0.0.1',
-            $processed['testDb']['user'],
-            $processed['testDb']['pass'],
-            $processed['testDb']['externallyManaged'] ?? false,
+            !empty($processed['testDb']['name']) ? $processed['testDb']['name'] : static::getEnvOrDefault('TEST_DB_NAME', ''),
+            !empty($processed['testDb']['namePrefix']) ? $processed['testDb']['namePrefix'] : static::getEnvOrDefault('TEST_DB_NAME_PREFIX', 'bgawb_game_'),
+            !empty($processed['testDb']['host']) ? $processed['testDb']['host'] : static::getEnvOrDefault('TEST_DB_HOST', '127.0.0.1'),
+            intval(!empty($processed['testDb']['port']) ? $processed['testDb']['port'] : static::getEnvOrDefault('TEST_DB_PORT', 3306)),
+            !empty($processed['testDb']['user']) ? $processed['testDb']['user'] : static::getEnvOrDefault('TEST_DB_USER', ''),
+            !empty($processed['testDb']['pass']) ? $processed['testDb']['pass'] : static::getEnvOrDefault('TEST_DB_PASS', ''),
+            $processed['testDb']['externallyManaged'] ?? static::getEnvOrDefault('TEST_DB_EXTERNALLY_MANAGED', false),
             $processed['linterPhpBin'],
             Option::fromValue(isset($processed['sftp']) ? $processed['sftp'] : null)->map(function (array $raw) {
                 return new DeployConfig($raw['host'], $raw['user'], $raw['pass']);
@@ -112,5 +113,16 @@ class WorkbenchProjectConfigSerialiser
         if ($result === false) {
             throw new \InvalidArgumentException('Error writing config file');
         }
+    }
+
+    /**
+     * @param string $key
+     * @param mixed $default
+     * @return mixed
+     */
+    public static function getEnvOrDefault(string $key, $default = null)
+    {
+        $v = getenv($key);
+        return $v ?: $default;
     }
 }

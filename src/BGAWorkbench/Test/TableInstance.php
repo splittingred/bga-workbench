@@ -64,6 +64,7 @@ class TableInstance
         $this->database = new DatabaseInstance(
             $name,
             $config->getTestDbHost(),
+            $config->getTestDbPort(),
             $config->getTestDbUsername(),
             $config->getTestDbPassword(),
             [

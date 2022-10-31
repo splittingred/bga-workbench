@@ -53,18 +53,20 @@ class DatabaseInstance
     /**
      * @param string $name
      * @param string $host
+     * @param int $port
      * @param string $username
      * @param string $password
      * @param string[] $tableSchemaPathnames
      * @param bool $externallyManaged Is the database created and managed by another system? (CI)
      */
-    public function __construct(string $name, string $host, string $username, string $password, array $tableSchemaPathnames, bool $externallyManaged = false)
+    public function __construct(string $name, string $host, int $port, string $username, string $password, array $tableSchemaPathnames, bool $externallyManaged = false)
     {
         $this->name = $name;
         $this->serverConnectionParams = [
             'user' => $username,
             'password' => $password,
             'host' => $host,
+            'port' => $port,
             'driver' => 'pdo_mysql'
         ];
         $this->externallyManaged = $externallyManaged;
