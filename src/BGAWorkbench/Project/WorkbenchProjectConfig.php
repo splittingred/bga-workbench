@@ -26,6 +26,11 @@ class WorkbenchProjectConfig
     /**
      * @var string
      */
+    private $testDbName;
+
+    /**
+     * @var string
+     */
     private $testDbNamePrefix;
 
     /**
@@ -52,6 +57,7 @@ class WorkbenchProjectConfig
      * @param \SplFileInfo $directory
      * @param bool $useComposer
      * @param string[] $extraSrcPaths
+     * @param string $testDbName
      * @param string $testDbNamePrefix
      * @param string $testDbUsername
      * @param string $testDbPassword
@@ -62,6 +68,7 @@ class WorkbenchProjectConfig
         \SplFileInfo $directory,
         bool $useComposer,
         array $extraSrcPaths,
+        string $testDbName,
         string $testDbNamePrefix,
         string $testDbUsername,
         string $testDbPassword,
@@ -72,6 +79,7 @@ class WorkbenchProjectConfig
         $this->directory = $directory;
         $this->useComposer = $useComposer;
         $this->extraSrcPaths = $extraSrcPaths;
+        $this->testDbName = $testDbName;
         $this->testDbNamePrefix = $testDbNamePrefix;
         $this->testDbUsername = $testDbUsername;
         $this->testDbPassword = $testDbPassword;
@@ -82,9 +90,9 @@ class WorkbenchProjectConfig
     /**
      * @return string
      */
-    public function getTestDbNamePrefix() : string
+    public function getTestDbName() : string
     {
-        return $this->testDbNamePrefix;
+        return !empty($this->testDbName) ? $this->testDbName : $this->getTestDbNamePrefix() . substr(md5(time()), 0, 10);
     }
 
     /**
@@ -159,5 +167,13 @@ class WorkbenchProjectConfig
             return new ComposerProject($this->directory, $projectName, $this->extraSrcPaths);
         }
         return new Project($this->directory, $projectName);
+    }
+
+    /**
+     * @return string
+     */
+    private function getTestDbNamePrefix() : string
+    {
+        return $this->testDbNamePrefix;
     }
 }

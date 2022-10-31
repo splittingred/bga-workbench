@@ -58,6 +58,7 @@ class InitCommandTest extends TestCase
                     $this->workingDir->getFileInfo(),
                     true,
                     [],
+                    '',
                     'dbname',
                     'dbuser',
                     'dbpass',

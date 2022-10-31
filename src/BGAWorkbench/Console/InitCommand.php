@@ -87,6 +87,7 @@ class InitCommand extends Command
             $config,
             [
                 'testDb' => [
+                    'name' => '',
                     'namePrefix' => $namePrefix,
                     'user' => $user,
                     'pass' => $pass

@@ -60,8 +60,9 @@ class TableInstance
         $this->players = $players;
         $this->playerAmendments = $playerAmendments;
         $this->options = $options;
+        $name = $config->getTestDbName();;
         $this->database = new DatabaseInstance(
-            $config->getTestDbNamePrefix() . substr(md5(time()), 0, 10),
+            ,
             $config->getTestDbUsername(),
             $config->getTestDbPassword(),
             [
