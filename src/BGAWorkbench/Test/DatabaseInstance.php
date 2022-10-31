@@ -136,6 +136,8 @@ class DatabaseInstance
     public function create(): DatabaseInstance
     {
         if ($this->externallyManaged) {
+            $this->getOrCreateSchemaConnection();
+            $this->createTables();
             return $this;
         }
 
@@ -164,6 +166,7 @@ class DatabaseInstance
     public function drop(): DatabaseInstance
     {
         if ($this->externallyManaged) {
+            $this->getOrCreateSchemaConnection();
             return $this;
         }
 
