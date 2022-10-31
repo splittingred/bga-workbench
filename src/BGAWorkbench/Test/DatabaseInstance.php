@@ -70,7 +70,7 @@ class DatabaseInstance
             'driver' => 'pdo_mysql'
         ];
         $this->externallyManaged = $externallyManaged;
-        $this->isCreated = $externallyManaged;
+        $this->isCreated = false;
         $this->config = new Configuration();
         $this->tableSchemaPathnames = $tableSchemaPathnames;
     }
@@ -144,16 +144,13 @@ class DatabaseInstance
 
     public function create(): DatabaseInstance
     {
-        if ($this->externallyManaged) {
-            $this->createTables();
-            return $this;
-        }
-
         if ($this->isCreated) {
             throw new \LogicException('Database already created');
         }
 
-        $this->getOrCreateSchemaConnection()->getSchemaManager()->dropAndCreateDatabase($this->name);
+        if (!$this->externallyManaged) {
+            $this->getOrCreateSchemaConnection()->getSchemaManager()->dropAndCreateDatabase($this->name);
+        }
         $this->createTables();
 
         $this->isCreated = true;
