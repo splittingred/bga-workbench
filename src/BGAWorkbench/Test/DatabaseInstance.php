@@ -5,6 +5,7 @@ namespace BGAWorkbench\Test;
 use Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
+use Doctrine\DBAL\Exception\ConnectionException;
 
 class DatabaseInstance
 {
@@ -136,7 +137,6 @@ class DatabaseInstance
     public function create(): DatabaseInstance
     {
         if ($this->externallyManaged) {
-            $this->getOrCreateSchemaConnection();
             $this->createTables();
             return $this;
         }
@@ -154,12 +154,22 @@ class DatabaseInstance
 
     private function createTables()
     {
-        foreach ($this->tableSchemaPathnames as $schemaPathname) {
-            $sql = @file_get_contents($schemaPathname);
-            if ($sql === false) {
-                throw new \RuntimeException("Couldn't read table schema from {$schemaPathname}");
+        try {
+            foreach ($this->tableSchemaPathnames as $schemaPathname) {
+                $sql = @file_get_contents($schemaPathname);
+                if ($sql === false) {
+                    throw new \RuntimeException("Couldn't read table schema from {$schemaPathname}");
+                }
+                $this->getOrCreateConnection()->executeUpdate($sql);
             }
-            $this->getOrCreateConnection()->executeUpdate($sql);
+        } catch (ConnectionException $e) {
+            $errorMessage = $e->getMessage();
+            $dbName = $this->name;
+            $dbConfig = $this->serverConnectionParams;
+            $dbConfig['password'] = str_repeat('*', mb_strlen($dbConfig['password']));
+            $dbConfig = print_r($dbConfig, true);
+            $message = "$errorMessage - $dbName - $dbConfig";
+            throw new \RuntimeException("Failed to connect to DB: $message");
         }
     }
 
