@@ -50,6 +50,9 @@ class DatabaseInstance
      */
     private $tableSchemaPathnames;
 
+    /** @var bool */
+    private $tablesCreated;
+
     /**
      * @param string $name
      * @param string $host
@@ -73,6 +76,7 @@ class DatabaseInstance
         $this->isCreated = false;
         $this->config = new Configuration();
         $this->tableSchemaPathnames = $tableSchemaPathnames;
+        $this->tablesCreated = false;
     }
 
     /**
@@ -148,8 +152,12 @@ class DatabaseInstance
             throw new \LogicException('Database already created');
         }
 
-        if (!$this->externallyManaged) {
-            $this->getOrCreateSchemaConnection()->getSchemaManager()->dropAndCreateDatabase($this->name);
+        $schema = $this->getOrCreateSchemaConnection()->getSchemaManager();
+        if ($this->externallyManaged) {
+            // we cant drop DB, so drop all tables instead
+            $this->dropTables();
+        } else {
+            $schema->dropAndCreateDatabase($this->name);
         }
         $this->createTables();
 
@@ -157,8 +165,10 @@ class DatabaseInstance
         return $this;
     }
 
-    private function createTables()
+    private function createTables(): DatabaseInstance
     {
+        if ($this->tablesCreated) { return $this; }
+
         try {
             foreach ($this->tableSchemaPathnames as $schemaPathname) {
                 $sql = @file_get_contents($schemaPathname);
@@ -176,6 +186,28 @@ class DatabaseInstance
             $message = "$errorMessage - $dbName - $dbConfig";
             throw new \RuntimeException("Failed to connect to DB: $message");
         }
+        $this->tablesCreated = true;
+        return $this;
+    }
+
+    public function dropTables(): DatabaseInstance
+    {
+        $connection = $this->getOrCreateConnection();
+        $connection->beginTransaction();
+        try {
+            $connection->prepare("SET FOREIGN_KEY_CHECKS = 0;")->execute();
+
+            foreach ($connection->getSchemaManager()->listTableNames() as $tableNames) {
+                $sql = 'DROP TABLE ' . $tableNames;
+                $connection->prepare($sql)->execute();
+            }
+            $connection->prepare("SET FOREIGN_KEY_CHECKS = 1;")->execute();
+            $connection->commit();
+        } catch (\Exception $e) {
+            $connection->rollBack();
+        }
+        $this->tablesCreated = false;
+        return $this;
     }
 
     public function drop(): DatabaseInstance
@@ -185,7 +217,7 @@ class DatabaseInstance
         }
 
         if ($this->externallyManaged) {
-            $this->truncate();
+            $this->dropTables();
         } else {
             $this->getOrCreateSchemaConnection()->getSchemaManager()->dropDatabase($this->name);
         }

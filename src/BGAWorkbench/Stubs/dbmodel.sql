@@ -1,4 +1,4 @@
-CREATE TABLE `player` (
+CREATE TABLE IF NOT EXISTS `player` (
   `player_no` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `player_id` int(10) unsigned NOT NULL COMMENT 'Reference to metagame player id',
   `player_canal` varchar(32) NOT NULL COMMENT 'Player comet d "secret" canal',
@@ -22,7 +22,7 @@ CREATE TABLE `player` (
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 
-CREATE TABLE `stats` (
+CREATE TABLE IF NOT EXISTS `stats` (
   `stats_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `stats_type` smallint(5) unsigned NOT NULL,
   `stats_player_id` int(10) unsigned DEFAULT NULL COMMENT 'if NULL: stat global to table',
