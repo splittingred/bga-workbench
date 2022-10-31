@@ -36,6 +36,11 @@ class WorkbenchProjectConfig
     /**
      * @var string
      */
+    private $testDbHost;
+
+    /**
+     * @var string
+     */
     private $testDbUsername;
 
     /**
@@ -64,6 +69,7 @@ class WorkbenchProjectConfig
      * @param string[] $extraSrcPaths
      * @param string $testDbName
      * @param string $testDbNamePrefix
+     * @param string $testDbHost
      * @param string $testDbUsername
      * @param string $testDbPassword
      * @param bool $testDbExternallyManaged
@@ -76,6 +82,7 @@ class WorkbenchProjectConfig
         array $extraSrcPaths,
         string $testDbName,
         string $testDbNamePrefix,
+        string $testDbHost,
         string $testDbUsername,
         string $testDbPassword,
         bool $testDbExternallyManaged,
@@ -88,6 +95,7 @@ class WorkbenchProjectConfig
         $this->extraSrcPaths = $extraSrcPaths;
         $this->testDbName = $testDbName;
         $this->testDbNamePrefix = $testDbNamePrefix;
+        $this->testDbHost = $testDbHost;
         $this->testDbUsername = $testDbUsername;
         $this->testDbPassword = $testDbPassword;
         $this->testDbExternallyManaged = $testDbExternallyManaged;
@@ -101,6 +109,14 @@ class WorkbenchProjectConfig
     public function getTestDbName() : string
     {
         return !empty($this->testDbName) ? $this->testDbName : $this->getTestDbNamePrefix() . substr(md5(time()), 0, 10);
+    }
+
+    /**
+     * @return string
+     */
+    public function getTestDbHost(): string
+    {
+        return $this->testDbHost;
     }
 
     /**

@@ -22,6 +22,7 @@ class ConfigFileConfiguration implements ConfigurationInterface
                     ->children()
                         ->scalarNode('name')->end()
                         ->scalarNode('namePrefix')->isRequired()->end()
+                        ->scalarNode('host')->end()
                         ->scalarNode('user')->isRequired()->end()
                         ->scalarNode('pass')->isRequired()->end()
                         ->booleanNode('externallyManaged')->end()

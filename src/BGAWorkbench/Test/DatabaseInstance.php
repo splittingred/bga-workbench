@@ -4,6 +4,7 @@ namespace BGAWorkbench\Test;
 
 use Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Exception\ConnectionException;
 
@@ -51,18 +52,19 @@ class DatabaseInstance
 
     /**
      * @param string $name
+     * @param string $host
      * @param string $username
      * @param string $password
      * @param string[] $tableSchemaPathnames
      * @param bool $externallyManaged Is the database created and managed by another system? (CI)
      */
-    public function __construct(string $name, string $username, string $password, array $tableSchemaPathnames, bool $externallyManaged = false)
+    public function __construct(string $name, string $host, string $username, string $password, array $tableSchemaPathnames, bool $externallyManaged = false)
     {
         $this->name = $name;
         $this->serverConnectionParams = [
             'user' => $username,
             'password' => $password,
-            'host' => '127.0.0.1',
+            'host' => $host,
             'driver' => 'pdo_mysql'
         ];
         $this->externallyManaged = $externallyManaged;
@@ -75,8 +77,9 @@ class DatabaseInstance
      * @param string $tableName
      * @param array $conditions
      * @return array
+     * @throws DBALException
      */
-    public function fetchRows($tableName, array $conditions = [])
+    public function fetchRows(string $tableName, array $conditions = [])
     {
         if (!$this->isCreated) {
             throw new \RuntimeException('Database not created');
@@ -96,8 +99,9 @@ class DatabaseInstance
     /**
      * @param string $sql
      * @return mixed
+     * @throws DBALException
      */
-    public function fetchValue($sql)
+    public function fetchValue(string $sql)
     {
         return $this->getOrCreateConnection()
             ->executeQuery($sql)
@@ -106,8 +110,9 @@ class DatabaseInstance
 
     /**
      * @return Connection
+     * @throws DBALException
      */
-    public function getOrCreateConnection()
+    public function getOrCreateConnection(): Connection
     {
         if ($this->connection === null) {
             $this->connection = DriverManager::getConnection(
@@ -121,8 +126,9 @@ class DatabaseInstance
 
     /**
      * @return Connection
+     * @throws DBALException
      */
-    private function getOrCreateSchemaConnection()
+    private function getOrCreateSchemaConnection(): Connection
     {
         if ($this->schemaConnection === null) {
             $this->schemaConnection = DriverManager::getConnection(

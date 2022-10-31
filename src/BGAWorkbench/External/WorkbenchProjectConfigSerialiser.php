@@ -87,6 +87,7 @@ class WorkbenchProjectConfigSerialiser
             $processed['extraSrc'],
             !empty($processed['testDb']['name']) ? $processed['testDb']['name'] : '',
             !empty($processed['testDb']['namePrefix']) ? $processed['testDb']['namePrefix'] : 'bgawb_game_',
+            !empty($processed['testDb']['host']) ? $processed['testDb']['host'] : '127.0.0.1',
             $processed['testDb']['user'],
             $processed['testDb']['pass'],
             $processed['testDb']['externallyManaged'] ?? false,

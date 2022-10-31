@@ -60,6 +60,7 @@ class InitCommandTest extends TestCase
                     [],
                     '',
                     'dbname',
+                    '127.0.0.1',
                     'dbuser',
                     'dbpass',
                     false,
