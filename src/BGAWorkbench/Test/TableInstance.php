@@ -69,7 +69,7 @@ class TableInstance
                 FileUtils::joinPath(__DIR__, '..', 'Stubs', 'dbmodel.sql'),
                 $this->project->getDbModelSqlFile()->getPathname()
             ],
-            !$config->shouldCreateDatabase()
+            $config->externallyManaged()
         );
         $this->isSetup = false;
     }

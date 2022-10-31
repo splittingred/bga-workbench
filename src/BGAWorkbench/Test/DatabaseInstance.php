@@ -29,9 +29,14 @@ class DatabaseInstance
     private $schemaConnection;
 
     /**
-     * @var boolean
+     * @var bool
      */
     private $isCreated;
+
+    /**
+     * @var bool
+     */
+    private $externallyManaged;
 
     /**
      * @var Configuration
@@ -48,9 +53,9 @@ class DatabaseInstance
      * @param string $username
      * @param string $password
      * @param string[] $tableSchemaPathnames
-     * @param bool $isCreated Is the database already created?
+     * @param bool $externallyManaged Is the database created and managed by another system? (CI)
      */
-    public function __construct(string $name, string $username, string $password, array $tableSchemaPathnames, bool $isCreated = false)
+    public function __construct(string $name, string $username, string $password, array $tableSchemaPathnames, bool $externallyManaged = false)
     {
         $this->name = $name;
         $this->serverConnectionParams = [
@@ -59,7 +64,8 @@ class DatabaseInstance
             'host' => '127.0.0.1',
             'driver' => 'pdo_mysql'
         ];
-        $this->isCreated = $isCreated;
+        $this->externallyManaged = $externallyManaged;
+        $this->isCreated = $externallyManaged;
         $this->config = new Configuration();
         $this->tableSchemaPathnames = $tableSchemaPathnames;
     }
@@ -127,16 +133,21 @@ class DatabaseInstance
         return $this->schemaConnection;
     }
 
-    public function create()
+    public function create(): DatabaseInstance
     {
+        if ($this->externallyManaged) {
+            return $this;
+        }
+
         if ($this->isCreated) {
-            return true;
+            throw new \LogicException('Database already created');
         }
 
         $this->getOrCreateSchemaConnection()->getSchemaManager()->dropAndCreateDatabase($this->name);
         $this->createTables();
 
         $this->isCreated = true;
+        return $this;
     }
 
     private function createTables()
@@ -150,8 +161,12 @@ class DatabaseInstance
         }
     }
 
-    public function drop()
+    public function drop(): DatabaseInstance
     {
+        if ($this->externallyManaged) {
+            return $this;
+        }
+
         if (!$this->isCreated) {
             throw new \LogicException('Database not created');
         }
@@ -159,6 +174,7 @@ class DatabaseInstance
         $this->getOrCreateSchemaConnection()->getSchemaManager()->dropDatabase($this->name);
 
         $this->isCreated = false;
+        return $this;
     }
 
     public function disconnect()

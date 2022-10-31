@@ -24,7 +24,7 @@ class ConfigFileConfiguration implements ConfigurationInterface
                         ->scalarNode('namePrefix')->isRequired()->end()
                         ->scalarNode('user')->isRequired()->end()
                         ->scalarNode('pass')->isRequired()->end()
-                        ->booleanNode('create')->end()
+                        ->booleanNode('externallyManaged')->end()
                     ->end()
                 ->end()
                 ->booleanNode('useComposer')

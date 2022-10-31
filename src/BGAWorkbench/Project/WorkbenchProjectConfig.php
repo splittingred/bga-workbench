@@ -46,7 +46,7 @@ class WorkbenchProjectConfig
     /**
      * @var bool
      */
-    private $testDbCreate;
+    private $testDbExternallyManaged;
 
     /**
      * @var string
@@ -66,7 +66,7 @@ class WorkbenchProjectConfig
      * @param string $testDbNamePrefix
      * @param string $testDbUsername
      * @param string $testDbPassword
-     * @param bool $testDbCreate
+     * @param bool $testDbExternallyManaged
      * @param string $linterPhpBin
      * @param Option $sftpConfig
      */
@@ -78,7 +78,7 @@ class WorkbenchProjectConfig
         string $testDbNamePrefix,
         string $testDbUsername,
         string $testDbPassword,
-        bool $testDbCreate,
+        bool $testDbExternallyManaged,
         string $linterPhpBin,
         Option $sftpConfig
     ) {
@@ -90,7 +90,7 @@ class WorkbenchProjectConfig
         $this->testDbNamePrefix = $testDbNamePrefix;
         $this->testDbUsername = $testDbUsername;
         $this->testDbPassword = $testDbPassword;
-        $this->testDbCreate = $testDbCreate;
+        $this->testDbExternallyManaged = $testDbExternallyManaged;
         $this->linterPhpBin = $linterPhpBin;
         $this->sftpConfig = $sftpConfig;
     }
@@ -122,9 +122,9 @@ class WorkbenchProjectConfig
     /**
      * @return bool
      */
-    public function shouldCreateDatabase(): bool
+    public function externallyManaged(): bool
     {
-        return $this->testDbCreate;
+        return $this->testDbExternallyManaged;
     }
 
     /**
