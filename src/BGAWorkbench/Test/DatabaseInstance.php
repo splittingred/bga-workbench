@@ -180,18 +180,45 @@ class DatabaseInstance
 
     public function drop(): DatabaseInstance
     {
-        if ($this->externallyManaged) {
-            $this->getOrCreateSchemaConnection();
-            return $this;
-        }
-
         if (!$this->isCreated) {
             throw new \LogicException('Database not created');
         }
 
-        $this->getOrCreateSchemaConnection()->getSchemaManager()->dropDatabase($this->name);
+        if ($this->externallyManaged) {
+            $this->truncate();
+        } else {
+            $this->getOrCreateSchemaConnection()->getSchemaManager()->dropDatabase($this->name);
+        }
 
         $this->isCreated = false;
+        return $this;
+    }
+
+    /**
+     * Truncate the DB
+     *
+     * @return $this
+     * @throws DBALException
+     * @throws \Doctrine\DBAL\ConnectionException
+     */
+    public function truncate(): DatabaseInstance
+    {
+        $connection = $this->getOrCreateSchemaConnection();
+        $schema = $connection->getSchemaManager();
+        $tableNames = $schema->listTableNames();
+        foreach ($tableNames as $tableName) {
+            $connection->beginTransaction();
+            try {
+                $connection->query('SET FOREIGN_KEY_CHECKS=0');
+                $q = $connection->getDatabasePlatform()->getTruncateTableSQL($tableName);
+                $connection->executeUpdate($q);
+                $connection->query('SET FOREIGN_KEY_CHECKS=1');
+                $connection->commit();
+            }
+            catch (\Exception $e) {
+                $connection->rollback();
+            }
+        }
         return $this;
     }
 
