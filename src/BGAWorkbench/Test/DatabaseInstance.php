@@ -130,7 +130,7 @@ class DatabaseInstance
     public function create()
     {
         if ($this->isCreated) {
-            throw new \LogicException('Database already created');
+            return true;
         }
 
         $this->getOrCreateSchemaConnection()->getSchemaManager()->dropAndCreateDatabase($this->name);
