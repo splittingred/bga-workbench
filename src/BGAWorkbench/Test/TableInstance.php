@@ -62,7 +62,7 @@ class TableInstance
         $this->options = $options;
         $name = $config->getTestDbName();;
         $this->database = new DatabaseInstance(
-            ,
+            $name,
             $config->getTestDbUsername(),
             $config->getTestDbPassword(),
             [
