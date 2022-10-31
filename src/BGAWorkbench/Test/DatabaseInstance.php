@@ -48,8 +48,9 @@ class DatabaseInstance
      * @param string $username
      * @param string $password
      * @param string[] $tableSchemaPathnames
+     * @param bool $isCreated Is the database already created?
      */
-    public function __construct($name, $username, $password, array $tableSchemaPathnames)
+    public function __construct(string $name, string $username, string $password, array $tableSchemaPathnames, bool $isCreated = false)
     {
         $this->name = $name;
         $this->serverConnectionParams = [
@@ -58,7 +59,7 @@ class DatabaseInstance
             'host' => '127.0.0.1',
             'driver' => 'pdo_mysql'
         ];
-        $this->isCreated = false;
+        $this->isCreated = $isCreated;
         $this->config = new Configuration();
         $this->tableSchemaPathnames = $tableSchemaPathnames;
     }

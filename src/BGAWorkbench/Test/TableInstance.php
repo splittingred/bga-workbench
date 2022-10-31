@@ -60,7 +60,7 @@ class TableInstance
         $this->players = $players;
         $this->playerAmendments = $playerAmendments;
         $this->options = $options;
-        $name = $config->getTestDbName();;
+        $name = $config->getTestDbName();
         $this->database = new DatabaseInstance(
             $name,
             $config->getTestDbUsername(),
@@ -68,7 +68,8 @@ class TableInstance
             [
                 FileUtils::joinPath(__DIR__, '..', 'Stubs', 'dbmodel.sql'),
                 $this->project->getDbModelSqlFile()->getPathname()
-            ]
+            ],
+            !$config->shouldCreateDatabase()
         );
         $this->isSetup = false;
     }

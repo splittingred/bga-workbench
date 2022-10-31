@@ -62,6 +62,7 @@ class InitCommandTest extends TestCase
                     'dbname',
                     'dbuser',
                     'dbpass',
+                    true,
                     'php',
                     new Some(
                         new DeployConfig('shost', 'suser', 'spass')

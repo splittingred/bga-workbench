@@ -44,6 +44,11 @@ class WorkbenchProjectConfig
     private $testDbPassword;
 
     /**
+     * @var bool
+     */
+    private $testDbCreate;
+
+    /**
      * @var string
      */
     private $linterPhpBin;
@@ -61,6 +66,7 @@ class WorkbenchProjectConfig
      * @param string $testDbNamePrefix
      * @param string $testDbUsername
      * @param string $testDbPassword
+     * @param bool $testDbCreate
      * @param string $linterPhpBin
      * @param Option $sftpConfig
      */
@@ -72,6 +78,7 @@ class WorkbenchProjectConfig
         string $testDbNamePrefix,
         string $testDbUsername,
         string $testDbPassword,
+        bool $testDbCreate,
         string $linterPhpBin,
         Option $sftpConfig
     ) {
@@ -83,6 +90,7 @@ class WorkbenchProjectConfig
         $this->testDbNamePrefix = $testDbNamePrefix;
         $this->testDbUsername = $testDbUsername;
         $this->testDbPassword = $testDbPassword;
+        $this->testDbCreate = $testDbCreate;
         $this->linterPhpBin = $linterPhpBin;
         $this->sftpConfig = $sftpConfig;
     }
@@ -109,6 +117,14 @@ class WorkbenchProjectConfig
     public function getTestDbPassword() : string
     {
         return $this->testDbPassword;
+    }
+
+    /**
+     * @return bool
+     */
+    public function shouldCreateDatabase(): bool
+    {
+        return $this->testDbCreate;
     }
 
     /**

@@ -89,6 +89,7 @@ class WorkbenchProjectConfigSerialiser
             !empty($processed['testDb']['namePrefix']) ? $processed['testDb']['namePrefix'] : 'bgawb_game_',
             $processed['testDb']['user'],
             $processed['testDb']['pass'],
+            $processed['testDb']['create'] ?? true,
             $processed['linterPhpBin'],
             Option::fromValue(isset($processed['sftp']) ? $processed['sftp'] : null)->map(function (array $raw) {
                 return new DeployConfig($raw['host'], $raw['user'], $raw['pass']);
